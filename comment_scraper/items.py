@@ -5,10 +5,18 @@
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
 
-import scrapy
+from scrapy.item import Item, Field
 
 
-class CommentScraperItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+class CommentScraperItem(Item):
+    article_id = Field()
+    comment_author = Field()
+    comment_id = Field()
+    comment_txt = Field()
+    comment_date = Field()
+    comment_time = Field() #?
+    recommend_pos = Field()
+    recommend_neg = Field()
+    comment_url = Field()
+    author_auth = Field()
+    top100 = Field()
