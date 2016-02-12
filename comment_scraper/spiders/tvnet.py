@@ -60,11 +60,9 @@ class TvnetSpider(scrapy.Spider):
                     comment_txt = comment.xpath(
                         'div[@class="comment-container"]/p[@class="message"]/text() | div[@class="comment-container"]/p[@class="message"]/a/@href').extract()
                     if comment_txt:
-                        comment_txt = map(unicode.strip, comment_txt)
-                        comment_txt = ' '.join(comment_txt)
-                        item['comment_txt'] = comment_txt
-                    item['comment_url'] = comment.xpath(
-                        'div[@class="comment-container"]/div/span[@class="date"]/a/@href').extract()
+                        item['comment_txt'] = ' '.join(comment_txt)
+                    item['comment_url'] = ''.join(comment.xpath(
+                        'div[@class="comment-container"]/div/span[@class="date"]/a/@href').extract())
                     avatar = comment.xpath('div[@class="author-picture-container"]/img/@src').extract()
                     author_auth = comment.xpath(
                         'div[@class="comment-container"]/div/span[@class="author"]/img/@src').extract()
