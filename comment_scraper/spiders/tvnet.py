@@ -45,7 +45,7 @@ class TvnetSpider(scrapy.Spider):
             for comment in response.xpath('//ol[@class="commentary"]/li'):
                 try:
                     item = CommentScraperItem()
-                    article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()  # for md5?
+                    article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()
                     item['article_id'] = article_id
                     item['comment_date'] = date
                     item['comment_id'] = comment.xpath('div[@class="comment-container"]/div/div[@class="comment-tool-container"]//@data-comment-id').extract()[0]
