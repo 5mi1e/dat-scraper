@@ -68,7 +68,7 @@ class ApolloSpider(scrapy.Spider):
                 'div[@class="article-comment-content"]/text() | div[@class="article-comment-content"]/a/@href'
                 ).extract()
             comment_txt = ' '.join(comment_txt)
-            if 'http%3A' in comment_txt:
+            if "/comment/external" in comment_txt:
                 comment_txt = re.sub('(/comment/external.url=)', "", comment_txt)
                 comment_txt = re.sub('(&hash=[a-z0-9]*)', "", comment_txt)
                 comment_txt = urllib.unquote(comment_txt)
