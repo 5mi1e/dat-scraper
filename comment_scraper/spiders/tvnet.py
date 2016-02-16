@@ -47,7 +47,10 @@ class TvnetSpider(scrapy.Spider):
                     item = CommentScraperItem()
                     article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()
                     item['article_id'] = article_id
-                    item['comment_date'] = date
+                    date_time = self.string_to_datetime(''.join(comment.xpath('div[@class="comment-container"]/div/span[@class="date"]/a/text()').extract()))
+
+                    item['comment_date'] = date_time.strftime('%Y-%m-%d')
+                    item['comment_time'] = date_time.strftime('%H:%M:%S')
                     item['comment_id'] = comment.xpath('div[@class="comment-container"]/div/div[@class="comment-tool-container"]//@data-comment-id').extract()[0]
                     comment_author = comment.css('span.author::text').extract()
                     if comment_author:
@@ -85,3 +88,34 @@ class TvnetSpider(scrapy.Spider):
             next_page = response.xpath('//a[contains(@class, "next")]/@href').extract()
             if next_page and next_page[0] != "#":
                 yield scrapy.Request(next_page[0], callback=lambda r, date=date: self.parse_comments(r, date))
+
+    def string_to_datetime(self, dstring):
+        if "odien" in dstring or "Vakar" in dstring:
+            commentTime = datetime.datetime.strptime(re.search('\d.:\d.', dstring).group(), '%H:%M').time()
+            if "Vakar" in dstring:
+                delta=1
+            else:
+                delta=0
+            commentDT = datetime.datetime.combine(datetime.date.today(), commentTime) - datetime.timedelta(days=delta)
+        elif "Pirms" in dstring:
+            h=0
+            m=0
+            s=0
+            if "stund" in dstring:
+                h = re.search('\d+(?=\sstun)', dstring).group()
+            if "min" in dstring:
+                m = re.search('\d+(?=\smin)', dstring).group()
+            if "sekund" in dstring:
+                s = re.search('\d+(?=\ssek)', dstring).group()
+            commentDT = datetime.datetime.combine(datetime.date.today(), datetime.datetime.now().time()) - datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+        else:
+            if dstring:
+                year = re.search('\d+(?=.\sg)', dstring).group()
+                month_string = re.search( '\w+(?=\s\d.:\d.)',dstring, re.U).group()
+                day = re.search( '(?<=g.\s)+.\d',dstring).group()
+                time = re.search( '\d.:\d.',dstring).group()
+                m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'octobrī':10, u'novembrī':11, u'decembrī':12}
+                month_num = m[month_string]
+                date = str(year)+'-'+str(month_num)+'-'+str(day)
+                commentDT = datetime.datetime.strptime(date+' '+time, '%Y-%m-%d %H:%M')
+        return commentDT
