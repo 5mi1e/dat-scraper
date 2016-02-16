@@ -90,6 +90,7 @@ class TvnetSpider(scrapy.Spider):
                 yield scrapy.Request(next_page[0], callback=lambda r, date=date: self.parse_comments(r, date))
 
     def string_to_datetime(self, dstring):
+        global commentDT
         if "odien" in dstring or "Vakar" in dstring:
             commentTime = datetime.datetime.strptime(re.search('\d.:\d.', dstring).group(), '%H:%M').time()
             if "Vakar" in dstring:
