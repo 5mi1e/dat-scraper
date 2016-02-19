@@ -118,7 +118,7 @@ class TvnetSpider(scrapy.Spider):
                 month_string = re.search( '\w+(?=\s\d.:\d.)', dstring, re.U).group()
                 day = re.search( '(?<=g.\s)\d+',dstring).group()
                 time = re.search( '\d.:\d.',dstring).group()
-                m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'octobrī':10, u'novembrī':11, u'decembrī':12}
+                m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'oktobrī':10, u'novembrī':11, u'decembrī':12}
                 month_num = m[month_string]
                 date_s = str(year)+'-'+str(month_num)+'-'+str(day)
                 commentDT = datetime.datetime.strptime(date_s+' '+time, '%Y-%m-%d %H:%M')
