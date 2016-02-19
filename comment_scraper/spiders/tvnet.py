@@ -40,8 +40,7 @@ class TvnetSpider(scrapy.Spider):
             yield scrapy.Request(url_rus, callback=self.parse)
 
     def parse_comments(self, response, date):
-        if response.xpath(
-                '//ol[@class="commentary"]/li/div[@class="comment-container"]/div/div[@class="comment-tool-container"]//@data-comment-id').extract():
+        if response.xpath('//ol[@class="commentary"]/li/div[@class="comment-container"]'): # TODO: check this!
             for comment in response.xpath('//ol[@class="commentary"]/li'):
                 #try:
                 if comment.xpath('div[@class="comment-container"]'):
@@ -49,7 +48,7 @@ class TvnetSpider(scrapy.Spider):
                     article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()
                     item['article_id'] = article_id
                     if 'http://rus.' in response.url:
-                        item['comment_date'] = date
+                        item['comment_date'] = date # TODO: rus.tvnet date&time for comments
                     else:
                         date_time = self.string_to_datetime(''.join(comment.xpath('div[@class="comment-container"]/div/span[@class="date"]/a/text()').extract()))
                         item['comment_date'] = date_time.strftime('%Y-%m-%d')
@@ -116,8 +115,8 @@ class TvnetSpider(scrapy.Spider):
         else:
             if dstring:
                 year = re.search('\d+(?=.\sg)', dstring).group()
-                month_string = re.search( '\w+(?=\s\d.:\d.)',dstring, re.U).group()
-                day = re.search( '(?<=g.\s)+.\d',dstring).group()
+                month_string = re.search( '\w+(?=\s\d.:\d.)', dstring, re.U).group()
+                day = re.search( '(?<=g.\s)\d+',dstring).group()
                 time = re.search( '\d.:\d.',dstring).group()
                 m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'octobrī':10, u'novembrī':11, u'decembrī':12}
                 month_num = m[month_string]
