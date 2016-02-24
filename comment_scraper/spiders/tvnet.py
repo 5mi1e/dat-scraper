@@ -40,19 +40,16 @@ class TvnetSpider(scrapy.Spider):
             yield scrapy.Request(url_rus, callback=self.parse)
 
     def parse_comments(self, response, date):
-        if response.xpath('//ol[@class="commentary"]/li/div[@class="comment-container"]'): # TODO: check this!
+        if response.xpath('//ol[@class="commentary"]/li/div[@class="comment-container"]'):
             for comment in response.xpath('//ol[@class="commentary"]/li'):
                 #try:
                 if comment.xpath('div[@class="comment-container"]'):
                     item = CommentScraperItem()
                     article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()
                     item['article_id'] = article_id
-                    if 'http://rus.' in response.url:
-                        item['comment_date'] = date # TODO: rus.tvnet date&time for comments
-                    else:
-                        date_time = self.string_to_datetime(''.join(comment.xpath('div[@class="comment-container"]/div/span[@class="date"]/a/text()').extract()))
-                        item['comment_date'] = date_time.strftime('%Y-%m-%d')
-                        item['comment_time'] = date_time.strftime('%H:%M:%S')
+                    date_time = self.string_to_datetime(''.join(comment.xpath('div[@class="comment-container"]/div/span[@class="date"]/a/text()').extract()))
+                    item['comment_date'] = date_time.strftime('%Y-%m-%d')
+                    item['comment_time'] = date_time.strftime('%H:%M:%S')
 
                     item['comment_id'] = comment.xpath('div[@class="comment-container"]/div/div[@class="comment-tool-container"]//@data-comment-id').extract()[0]
                     comment_author = comment.css('span.author::text').extract()
@@ -94,31 +91,44 @@ class TvnetSpider(scrapy.Spider):
 
     def string_to_datetime(self, dstring):
         global commentDT
-        if "odien" in dstring or "Vakar" in dstring:
+        if u"Šodien" in dstring or u"Vakar" in dstring or u"Сегодня" in dstring or u"Вчера" in dstring:
             commentTime = datetime.datetime.strptime(re.search('\d.:\d.', dstring).group(), '%H:%M').time()
-            if "Vakar" in dstring:
+            if u"Vakar" in dstring or u"Вчера" in dstring:
                 delta=1
             else:
                 delta=0
             commentDT = datetime.datetime.combine(datetime.date.today(), commentTime) - datetime.timedelta(days=delta)
-        elif "Pirms" in dstring:
+        elif u"Pirms" in dstring or u"ч." in dstring or u"мин." in dstring or u"сек." in dstring:
             h=0
             m=0
             s=0
             if "stund" in dstring:
                 h = re.search('\d+(?=\sstun)', dstring).group()
+            if u"ч." in dstring:
+                h = re.search(u'\d+(?=\sч\.)', dstring, re.U).group()
             if "min" in dstring:
                 m = re.search('\d+(?=\smin)', dstring).group()
+            if u"мин." in dstring:
+                m = re.search(u'\d+(?=\sмин\.)', dstring, re.U).group()
             if "sekund" in dstring:
                 s = re.search('\d+(?=\ssek)', dstring).group()
+            if u"сек." in dstring:
+                s = re.search(u'\d+(?=\sсек\.)', dstring, re.U).group()
             commentDT = datetime.datetime.combine(datetime.date.today(), datetime.datetime.now().time()) - datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
         else:
             if dstring:
-                year = re.search('\d+(?=.\sg)', dstring).group()
-                month_string = re.search( '\w+(?=\s\d.:\d.)', dstring, re.U).group()
-                day = re.search( '(?<=g.\s)\d+',dstring).group()
-                time = re.search( '\d.:\d.',dstring).group()
-                m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'oktobrī':10, u'novembrī':11, u'decembrī':12}
+                if re.search(u'[а-яА-Я]', dstring, re.U):
+                    year = re.search(u'\d+(?=\sг\.)', dstring, re.U).group()
+                    month_string = re.search( u'\w+(?=\s\d{4})', dstring, re.U).group()
+                    day = re.search( '^\d+',dstring).group()
+                    time = re.search( '\d.:\d.',dstring).group()
+                    m = {u'января': 1, u'февраля': 2, u'марта': 3, u'апреля':4, u'мая':5, u'июня':6, u'июля':7, u'августа':8, u'сентября':9, u'октября':10, u'ноября':11, u'декабря':12}
+                else:
+                    year = re.search('\d+(?=.\sg)', dstring).group()
+                    month_string = re.search( '\w+(?=\s\d.:\d.)', dstring, re.U).group()
+                    day = re.search( '(?<=g.\s)\d+',dstring).group()
+                    time = re.search( '\d.:\d.',dstring).group()
+                    m = {u'janvārī': 1, u'februārī': 2, u'martā': 3, u'aprīlī':4, u'maijā':5, u'jūnijā':6, u'jūlijā':7, u'augustā':8, u'septembrī':9, u'oktobrī':10, u'novembrī':11, u'decembrī':12}
                 month_num = m[month_string]
                 date_s = str(year)+'-'+str(month_num)+'-'+str(day)
                 commentDT = datetime.datetime.strptime(date_s+' '+time, '%Y-%m-%d %H:%M')
