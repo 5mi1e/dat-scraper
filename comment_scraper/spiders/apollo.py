@@ -46,6 +46,7 @@ class ApolloSpider(scrapy.Spider):
     def parse_comments(self, response):
         for comment in response.xpath('//div[@class="article-comments"]/div[ contains(@class, "article-comment")]'):
             item = CommentScraperItem()
+            item['article_id'] = re.search('(?<=\/)\d{4,10}', response.url).group() # TODO: Test this
             item['comment_id'] = re.search('([0-9]+)', comment.xpath('@id').extract()[0]).group()
             auth = comment.xpath(
                 'div/span[@class="article-comment-pic"]//span[contains(@class, "icon-soc")]/@title').extract()

@@ -11,5 +11,5 @@ class DelfiSpider(scrapy.Spider):
 
     def parse(self, response):
         pass
-
+# TODO: Delfi comments
 #http://www.delfi.lv/archive/?tod=12.02.2016&fromd=12.02.2016&channel=0&category=0&query=#
