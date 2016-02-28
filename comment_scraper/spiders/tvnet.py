@@ -30,8 +30,6 @@ class TvnetSpider(scrapy.Spider):
         for article in response.xpath('//div[ contains(@class, "list highlight late") ]/ul/li/div/h4'):
             comments_url = article.xpath('a[@class="comment"]/@href').extract()
             if comments_url:
-                #d_current = re.search('(?<=all\/)(.*$)', response.url).group() # TODO: Test this!
-                #yield scrapy.Request(comments_url[0], callback=lambda r, date=d_current: self.parse_comments(r, date))
                 yield scrapy.Request(comments_url[0], callback=self.parse_comments)
         self.start_date += self.step
         if self.start_date <= self.end_date:
@@ -40,10 +38,9 @@ class TvnetSpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.parse)
             yield scrapy.Request(url_rus, callback=self.parse)
 
-    def parse_comments(self, response): # date
+    def parse_comments(self, response):
         if response.xpath('//ol[@class="commentary"]/li/div[@class="comment-container"]'):
             for comment in response.xpath('//ol[@class="commentary"]/li'):
-                #try:
                 if comment.xpath('div[@class="comment-container"]'):
                     item = CommentScraperItem()
                     article_id = re.search('(?<=\/)([0-9]*)(?=\-)', response.url).group()
@@ -84,11 +81,8 @@ class TvnetSpider(scrapy.Spider):
                             'div[@class="comment-container"]/div/span[@class="author"]/img[@class="top-commentator"]'):
                         item['top100'] = 1
                     yield item
-                #except:
-                #    pass
             next_page = response.xpath('//a[contains(@class, "next")]/@href').extract()
             if next_page and next_page[0] != "#":
-                #yield scrapy.Request(next_page[0], callback=lambda r, date=date: self.parse_comments(r, date))
                 yield scrapy.Request(next_page[0], callback= self.parse_comments)
 
     def string_to_datetime(self, dstring):

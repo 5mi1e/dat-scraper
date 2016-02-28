@@ -47,7 +47,7 @@ class ApolloSpider(scrapy.Spider):
         for comment in response.xpath('//div[@class="article-comments"]/div[ contains(@class, "article-comment")]'):
             if not comment.xpath('p[@class="no-comments-alert"]'):
                 item = CommentScraperItem()
-                item['article_id'] = re.search('(?<=\/)\d{4,10}', response.url).group() # TODO: Test this
+                item['article_id'] = re.search('(?<=\/)\d{4,10}', response.url).group()
                 item['comment_id'] = re.search('([0-9]+)', comment.xpath('@id').extract()[0]).group()
                 auth = comment.xpath(
                     'div/span[@class="article-comment-pic"]//span[contains(@class, "icon-soc")]/@title').extract()
