@@ -15,6 +15,8 @@ SPIDER_MODULES = ['comment_scraper.spiders']
 NEWSPIDER_MODULE = 'comment_scraper.spiders'
 DOWNLOAD_HANDLERS = {'s3': None,}
 
+#SPLASH_URL = 'http://127.0.0.1:8050'
+SPLASH_URL = 'http://192.168.1.100:8050'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'comment_scraper (+http://www.yourdomain.com)'
 
@@ -49,9 +51,11 @@ TELNETCONSOLE_ENABLED=False
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'comment_scraper.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapyjs.SplashMiddleware': 725,
+}
+
+DUPEFILTER_CLASS = 'scrapyjs.SplashAwareDupeFilter'
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
