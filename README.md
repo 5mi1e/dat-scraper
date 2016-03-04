@@ -6,12 +6,12 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
 
 ## **Install**
 
-1. **Clone the repo**
-2. **Install requirements**
+1. Clone the repo
+2. Install requirements
 
-   + `$ pip install -r requirements.txt`
+     `$ pip install -r requirements.txt`
 
-  + for delfi.lv comments
+   + for delfi.lv comments
      + `$ docker pull scrapinghub/splash`
      + `$ docker run -p 8050:8050 scrapinghub/splash`
 
