@@ -3,6 +3,8 @@ import scrapy
 import datetime
 import re
 import json
+import urlparse
+
 from scrapy.selector import Selector
 from comment_scraper.items import CommentScraperItem
 
@@ -52,9 +54,11 @@ class DelfiSpider(scrapy.Spider):
             self.start_date = datetime.datetime.strptime(dfrom, '%Y-%m-%d').date()
             self.end_date = datetime.datetime.strptime(dto, '%Y-%m-%d').date()
         self.step = datetime.timedelta(days=1)
-        self.allowed_domains = ['delfi.lv']  # TODO: rus.delfi
+        self.allowed_domains = ['delfi.lv']
         self.start_urls = (
             'http://www.delfi.lv/archive/?tod={2}-{1}-{0}&fromd={2}-{1}-{0}&channel=0&category=0&query=#'.format(
+                str(self.start_date.year), str(self.start_date.month), str(self.start_date.day)),
+            'http://rus.delfi.lv/archive/?tod={2}-{1}-{0}&fromd={2}-{1}-{0}&channel=0&category=0&query=#'.format(
                 str(self.start_date.year), str(self.start_date.month), str(self.start_date.day)),
         )
         self.logger.info('\033[92m' + 'Datumu diapazons: %s - %s' + '\033[0m', self.start_date, self.end_date)
@@ -75,12 +79,12 @@ class DelfiSpider(scrapy.Spider):
         if next_page:
             next_page = next_page[0].strip('\n\t')
             next_page = re.sub('\n\t+', '', next_page)
-            yield scrapy.Request('http://www.delfi.lv' + next_page, callback=self.parse)
-        else:
+            yield scrapy.Request('http://'+ urlparse.urlparse(response.url).netloc + next_page, callback=self.parse)
+        else: # TODO: fix date iteration
             self.start_date += self.step
             if self.start_date <= self.end_date:
-                url = 'http://www.delfi.lv/archive/?tod={2}-{1}-{0}&fromd={2}-{1}-{0}&channel=0&category=0&query=#'.format(
-                str(self.start_date.year), str(self.start_date.month), str(self.start_date.day))
+                url = 'http://' + urlparse.urlparse(response.url).netloc + '/archive/?tod={2}-{1}-{0}&fromd={2}-{1}-{0}&channel=0&category=0&query=#'.format(
+                    str(self.start_date.year), str(self.start_date.month), str(self.start_date.day))
                 yield scrapy.Request(url, callback=self.parse)
 
     def parse_comments(self, response):
@@ -104,9 +108,14 @@ class DelfiSpider(scrapy.Spider):
                     date_time = datetime.datetime.strptime(date_time_str, '%d.%m.%Y %H:%M')
                     comment_date = date_time.strftime('%Y-%m-%d')
                     comment_time = date_time.strftime('%H:%M:%S')
-                    comment_txt = ''.join(comment.xpath('div[@class="comment-content"]/div[@class="comment-content-inner"]/text()').extract()).strip('\n\t')
-                    recommend_pos = ''.join(comment.xpath('div[@class="comment-votes"]/div[@class="comment-votes-up"]/a/text()').extract()).strip('\n\t')
-                    recommend_neg = ''.join(comment.xpath('div[@class="comment-votes"]/div[@class="comment-votes-down"]/a/text()').extract()).strip('\n\t')
+                    comment_txt = ''.join(comment.xpath(
+                        'div[@class="comment-content"]/div[@class="comment-content-inner"]/text()').extract()).strip(
+                        '\n\t')
+                    recommend_pos = ''.join(comment.xpath(
+                        'div[@class="comment-votes"]/div[@class="comment-votes-up"]/a/text()').extract()).strip('\n\t')
+                    recommend_neg = ''.join(comment.xpath(
+                        'div[@class="comment-votes"]/div[@class="comment-votes-down"]/a/text()').extract()).strip(
+                        '\n\t')
                     if not recommend_neg and not recommend_pos:
                         recommend_neg = 0
                         recommend_pos = 0
@@ -139,9 +148,14 @@ class DelfiSpider(scrapy.Spider):
                     date_time = datetime.datetime.strptime(date_time_str, '%d.%m.%Y %H:%M')
                     comment_date = date_time.strftime('%Y-%m-%d')
                     comment_time = date_time.strftime('%H:%M:%S')
-                    comment_txt = ''.join(comment.xpath('div[@class="comment-content"]/div[@class="comment-content-inner"]/text()').extract()).strip('\n\t')
-                    recommend_pos = ''.join(comment.xpath('div[@class="comment-votes"]/div[@class="comment-votes-up"]/a/text()').extract()).strip('\n\t')
-                    recommend_neg = ''.join(comment.xpath('div[@class="comment-votes"]/div[@class="comment-votes-down"]/a/text()').extract()).strip('\n\t')
+                    comment_txt = ''.join(comment.xpath(
+                        'div[@class="comment-content"]/div[@class="comment-content-inner"]/text()').extract()).strip(
+                        '\n\t')
+                    recommend_pos = ''.join(comment.xpath(
+                        'div[@class="comment-votes"]/div[@class="comment-votes-up"]/a/text()').extract()).strip('\n\t')
+                    recommend_neg = ''.join(comment.xpath(
+                        'div[@class="comment-votes"]/div[@class="comment-votes-down"]/a/text()').extract()).strip(
+                        '\n\t')
                     if not recommend_neg and not recommend_pos:
                         recommend_neg = 0
                         recommend_pos = 0
