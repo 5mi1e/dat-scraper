@@ -36,4 +36,6 @@ without arguments spider collects only todays comments
 
 `$ scrapy crawl <spider name> -a dfrom=2016-01-01 -a dto=2016-02-01`
 
+_in this example spider will run thru all dates from 2016-01-01 to 2016-02-01_
+
 _[More info about Scrapy](http://doc.scrapy.org/en/latest/)_
