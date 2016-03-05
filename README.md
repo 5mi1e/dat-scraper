@@ -25,11 +25,15 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
     [here (ScrapyJS)](https://github.com/scrapinghub/scrapy-splash) and
     [here (Splash)](http://splash.readthedocs.org/en/latest/install.html)_
 
-## *Usage*
+## **Usage**
 
 `$ scrapy crawl <spider name>`
 
-where spider name is  `delfi`, `apollo` or `tvnet`
+where <spider name\> is  `delfi`, `apollo` or `tvnet`
 
+dates can be passed to spider via `dfrom` and `dto` variables in format yyyy-mm-dd,
+without arguments spider collects only todays comments
+
+`$ scrapy crawl <spider name> -a dfrom=2016-01-01 -a dto=2016-02-01`
 
 _[More info about Scrapy](http://doc.scrapy.org/en/latest/)_
