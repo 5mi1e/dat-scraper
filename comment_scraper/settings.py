@@ -21,7 +21,7 @@ SPLASH_URL = 'http://192.168.1.100:8050'
 #USER_AGENT = 'comment_scraper (+http://www.yourdomain.com)'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS=256
+CONCURRENT_REQUESTS=10 #256
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay

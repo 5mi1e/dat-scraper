@@ -4,7 +4,7 @@ import datetime
 import re
 import json
 import urlparse
-
+import scrapyjs
 from scrapy.selector import Selector
 from comment_scraper.items import CommentScraperItem
 
@@ -73,6 +73,7 @@ class DelfiSpider(scrapy.Spider):
                         'splash': {
                             'args': {'lua_source': self.script,},
                             'endpoint': 'execute',
+                            'slot_policy': scrapyjs.SlotPolicy.SINGLE_SLOT,
                         }
                     })
         next_page = response.xpath('//a[@class="item next"]/@href').extract()
@@ -183,5 +184,6 @@ class DelfiSpider(scrapy.Spider):
                     'splash': {
                         'args': {'lua_source': self.script,},
                         'endpoint': 'execute',
+                        'slot_policy': scrapyjs.SlotPolicy.SINGLE_SLOT,
                     }
                 })
