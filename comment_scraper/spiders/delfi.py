@@ -12,37 +12,38 @@ from comment_scraper.items import CommentScraperItem
 class DelfiSpider(scrapy.Spider):
     name = "delfi"
     script = """
-        function main(splash)
-            splash.images_enabled = false
-            assert(splash:autoload("https://code.jquery.com/jquery-2.1.3.min.js"))
-            assert(splash:go(splash.args.url))
-            local show_c = splash:jsfunc([[
+    function main(splash)
+        splash.images_enabled = false
+        assert(splash:go(splash.args.url))
+        local result, error = splash:wait_for_resume(string.format([[
+            function main(splash){
                 function showComments(){
-                var shown = document.querySelectorAll('div.load-more-comments-btn[style="display: none;"]').length
-                var hidden = document.querySelectorAll('div.load-more-comments-btn').length
+                    var shown = document.querySelectorAll('div.load-more-comments-btn[style="display: none;"]').length
+                    var hidden = document.querySelectorAll('div.load-more-comments-btn').length
                     var divs = document.querySelectorAll('div.load-more-comments-btn'), i;
-                    for (i = 0; i < divs.length; ++i) {
-                            if ((divs[i].style.display) != "none"){
-                                $(divs[i].querySelector("a.load-more-comments-btn-link").click());
-                            }
+                    for (var i = divs.length - 1; i >= 0; i--) {
+                    if ((divs[i].style.display) != "none"){
+                        window.CommentList.loadMoreComment(divs[i].querySelector("a.load-more-comments-btn-link"));
+                        }
                     }
-                setTimeout(function(){
-                    shown = document.querySelectorAll('div.load-more-comments-btn[style="display: none;"]').length
+                    setTimeout(function(){
+                        shown = document.querySelectorAll('div.load-more-comments-btn[style="display: none;"]').length
                         if (shown < hidden) {
                             showComments();
+                        } else {
+                            splash.resume();
                         }
-                    }, 500)
+                    }, 3000)
                 }
-            ]])
-        show_c()
-        assert(splash:wait(7.0))
-        return {
+                showComments();
+            }
+
+        ]]))
+         return {
             html = splash:html(),
             url = splash.args.url,
             }
-
-
-        end
+     end
     """
 
     def __init__(self, dfrom=None, dto=None, *args, **kwargs):
