@@ -16,10 +16,8 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
      + `$ docker run -p 8050:8050 scrapinghub/splash`
 
      + change `SPLASH_URL` variable in `comment_scraper/settings.py` to point to your docker instance with splash. In case of _localhost_ to:
-
-            SPLASH_URL = 'http://127.0.0.1:8050'
-
-
+     ```
+     SPLASH_URL = 'http://127.0.0.1:8050'
 
   _More info
     [here (ScrapyJS)](https://github.com/scrapinghub/scrapy-splash) and
