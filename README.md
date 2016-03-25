@@ -28,7 +28,7 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
 
 `$ scrapy crawl <spider name>`
 
-where <spider name\> is  `delfi`, `apollo` or `tvnet`
+where `<spider name>` is  `delfi`, `apollo` or `tvnet`
 
 dates can be passed to spider via `dfrom` and `dto` variables in format yyyy-mm-dd,
 without arguments spider collects only todays comments
