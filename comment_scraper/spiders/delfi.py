@@ -20,7 +20,7 @@ class DelfiSpider(scrapy.Spider):
                 function showComments(){
                     var shown = document.querySelectorAll('div.load-more-comments-btn[style="display: none;"]').length
                     var hidden = document.querySelectorAll('div.load-more-comments-btn').length
-                    var divs = document.querySelectorAll('div.load-more-comments-btn'), i;
+                    var divs = document.querySelectorAll('div.load-more-comments-btn');
                     for (var i = divs.length - 1; i >= 0; i--) {
                     if ((divs[i].style.display) != "none"){
                         window.CommentList.loadMoreComment(divs[i].querySelector("a.load-more-comments-btn-link"));
@@ -33,7 +33,7 @@ class DelfiSpider(scrapy.Spider):
                         } else {
                             splash.resume();
                         }
-                    }, 3000)
+                    }, 3000);
                 }
                 showComments();
             }
@@ -99,51 +99,26 @@ class DelfiSpider(scrapy.Spider):
 
         if int(comment_count) > 0:
 
-            if anon and "reg=0" in url:
-                for comment in sel.xpath(
-                        '//div[@id="comments-list"]//div[contains(@class, "comment-post") and not(contains(@class, "comment-deleted")) and not(contains(@class, "comment-avatar-registered"))]'):
+            if (anon and "reg=0" in url) or (reg and "reg=1" in url):
+                if anon and "reg=0" in url:
+                    selxpath = sel.xpath(
+                        '//div[@id="comments-list"]//div[contains(@class, "comment-post") and not(contains(@class, "comment-deleted")) and not(contains(@class, "comment-avatar-registered"))]')
+
+                elif reg and "reg=1" in url:
+                    selxpath = sel.xpath(
+                        '//div[@id="comments-list"]//div[contains(@class, "comment-post") and not(contains(@class, "comment-deleted")) and not(contains(@class, "comment-avatar-anonymous"))]')
+
+                for comment in selxpath:
+
                     item = CommentScraperItem()
-                    comment_author = comment.xpath('div[@class="comment-author"]/text()').extract()[0].strip('\n\t')
-                    comment_id = re.sub('[a-z]', '',
-                                        comment.xpath('a[@class="comment-list-comment-anchor"]/@name').extract()[0])
-                    date_time_str = comment.xpath('div[@class="comment-date"]/text()').extract()[0].strip('\n\t')
-                    date_time = datetime.datetime.strptime(date_time_str, '%d.%m.%Y %H:%M')
-                    comment_date = date_time.strftime('%Y-%m-%d')
-                    comment_time = date_time.strftime('%H:%M:%S')
-                    comment_txt = ''.join(comment.xpath(
-                        'div[@class="comment-content"]/div[@class="comment-content-inner"]/text()').extract()).strip(
-                        '\n\t')
-                    recommend_pos = ''.join(comment.xpath(
-                        'div[@class="comment-votes"]/div[@class="comment-votes-up"]/a/text()').extract()).strip('\n\t')
-                    recommend_neg = ''.join(comment.xpath(
-                        'div[@class="comment-votes"]/div[@class="comment-votes-down"]/a/text()').extract()).strip(
-                        '\n\t')
-                    if not recommend_neg and not recommend_pos:
-                        recommend_neg = 0
-                        recommend_pos = 0
-                    article_id = re.search('(?<=id\=)(\d+)', url)
-                    if not article_id:
-                        article_id = re.search('(?<=\/)(\d+)', url).group()
+
+                    if anon and "reg=0" in url:
+                        comment_author = comment.xpath('div[@class="comment-author"]/text()').extract()[0].strip('\n\t')
+                    elif reg and "reg=1" in url:
+                        comment_author = comment.xpath('div[@class="comment-author"]/a/text()').extract()[0].strip('\n\t')
                     else:
-                        article_id = article_id.group()
+                        comment_author = ''
 
-                    item['article_id'] = article_id
-                    item['comment_url'] = url
-                    item['comment_txt'] = comment_txt
-                    item['comment_date'] = comment_date
-                    item['comment_time'] = comment_time
-                    item['recommend_neg'] = int(recommend_neg)
-                    item['recommend_pos'] = int(recommend_pos)
-                    item['comment_author'] = comment_author
-                    item['comment_id'] = comment_id
-
-                    yield item
-
-            elif reg and "reg=1" in url:
-                for comment in sel.xpath(
-                        '//div[@id="comments-list"]//div[contains(@class, "comment-post") and not(contains(@class, "comment-deleted")) and not(contains(@class, "comment-avatar-anonymous"))]'):
-                    item = CommentScraperItem()
-                    comment_author = comment.xpath('div[@class="comment-author"]/a/text()').extract()[0].strip('\n\t')
                     comment_id = re.sub('[a-z]', '',
                                         comment.xpath('a[@class="comment-list-comment-anchor"]/@name').extract()[0])
                     date_time_str = comment.xpath('div[@class="comment-date"]/text()').extract()[0].strip('\n\t')
