@@ -86,7 +86,7 @@ class TvnetSpider(scrapy.Spider):
                 yield scrapy.Request(next_page[0], callback= self.parse_comments)
 
     def string_to_datetime(self, dstring):
-        global commentDT
+        commentDT = datetime.time(0, 0)
         if u"Šodien" in dstring or u"Vakar" in dstring or u"Сегодня" in dstring or u"Вчера" in dstring:
             commentTime = datetime.datetime.strptime(re.search('\d.:\d.', dstring).group(), '%H:%M').time()
             if u"Vakar" in dstring or u"Вчера" in dstring:
