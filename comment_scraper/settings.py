@@ -16,12 +16,13 @@ NEWSPIDER_MODULE = 'comment_scraper.spiders'
 DOWNLOAD_HANDLERS = {'s3': None,}
 
 #SPLASH_URL = 'http://127.0.0.1:8050'
-SPLASH_URL = 'http://192.168.1.100:8050'
+#SPLASH_URL = 'http://192.168.1.100:8050'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'comment_scraper (+http://www.yourdomain.com)'
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS=10 #256
+CONCURRENT_REQUESTS=5 #256
+RETRY_TIMES=4
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
@@ -48,20 +49,20 @@ TELNETCONSOLE_ENABLED=False
 #SPIDER_MIDDLEWARES = {
 #    'comment_scraper.middlewares.MyCustomSpiderMiddleware': 543,
 #}
-SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-}
+#SPIDER_MIDDLEWARES = {
+#    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+#}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
-}
+#DOWNLOADER_MIDDLEWARES = {
+#    'scrapy_splash.SplashCookiesMiddleware': 723,
+#    'scrapy_splash.SplashMiddleware': 725,
+#    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+#}
 
-DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+#DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
