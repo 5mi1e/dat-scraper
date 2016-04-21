@@ -20,6 +20,8 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
        [How to install PhantomJS on Ubuntu](https://gist.github.com/julionc/7476620)
 
        [Install and configure PhantomJS](http://attester.ariatemplates.com/usage/phantom.html)
+
+
 ## **Usage**
 
 `$ scrapy crawl <spider name>`
