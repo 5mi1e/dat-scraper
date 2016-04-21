@@ -12,21 +12,18 @@ which collects comments from 3 major latvian news portals: [delfi.lv](http://www
      `$ pip install -r requirements.txt`
 
    + for delfi.lv comments
-     + `$ docker pull scrapinghub/splash`
-     + `$ docker run -p 8050:8050 scrapinghub/splash`
 
-     + change `SPLASH_URL` variable in `comment_scraper/settings.py` to point to your docker instance with splash. In case of _localhost_ to:
-     ```
-     SPLASH_URL = 'http://127.0.0.1:8050'
-     ```
+       Install PhantomJS
 
-  _More info
-    [here (ScrapyJS)](https://github.com/scrapinghub/scrapy-splash) and
-    [here (Splash)](http://splash.readthedocs.org/en/latest/install.html)_
+       [Download](http://phantomjs.org/download.html)
 
+       [How to install PhantomJS on Ubuntu](https://gist.github.com/julionc/7476620)
+
+       [Install and configure PhantomJS](http://attester.ariatemplates.com/usage/phantom.html)
 ## **Usage**
 
 `$ scrapy crawl <spider name>`
+
 
 where `<spider name>` is  `delfi`, `apollo` or `tvnet`
 
