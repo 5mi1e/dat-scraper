@@ -1,6 +1,7 @@
 .idea
 *.json
 *.pyc
+*.log
 /project.egg-info
 /build
 /setup.py
