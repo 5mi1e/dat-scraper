@@ -45,7 +45,7 @@ class ApolloSpider(scrapy.Spider):
 
     def parse_comments(self, response):
         for comment in response.xpath('//div[@class="article-comments"]/div[ contains(@class, "article-comment")]'):
-            if not comment.xpath('p[@class="no-comments-alert"]'):
+            if not comment.xpath('p[@class="no-comments-alert"]') and comment.xpath('div[@class="article-comment-content"]'):
                 item = CommentScraperItem()
                 item['article_id'] = re.search('(?<=\/)\d{4,10}', response.url).group()
                 item['comment_id'] = re.search('([0-9]+)', comment.xpath('@id').extract()[0]).group()
