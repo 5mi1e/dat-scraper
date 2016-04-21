@@ -11,6 +11,7 @@ from comment_scraper.items import CommentScraperItem
 
 class DelfiSpider(scrapy.Spider):
     name = "delfi"
+
     def __init__(self, dfrom=None, dto=None, *args, **kwargs):
         super(DelfiSpider, self).__init__(*args, **kwargs)
 
@@ -25,6 +26,13 @@ class DelfiSpider(scrapy.Spider):
             self.end_date = datetime.datetime.strptime(dto, '%Y-%m-%d').date()
         self.step = datetime.timedelta(days=1)
         self.allowed_domains = ['delfi.lv']
+
+        #Not working
+        #https://github.com/scrapy/scrapy/issues/1343
+        #self.custom_settings = {'CONCURRENT_REQUESTS': 5,
+        #                        'RETRY_TIMES': 4,
+        #                    }
+
         self.start_urls = (
             'http://www.delfi.lv/archive/?tod={2}-{1}-{0}&fromd={2}-{1}-{0}&channel=0&category=0&query=#'.format(
                 str(self.start_date.year), str(self.start_date.month), str(self.start_date.day)),
@@ -37,6 +45,7 @@ class DelfiSpider(scrapy.Spider):
         self.driver.quit()
 
     def parse(self, response):
+
         for article in response.xpath('//div[@class="arch-search-list"]/ol/li[@class="odd"]'):
             comment_url = article.xpath('div[@class="search-item-content"]/a[@class="commentCount"]/@href').extract()
             if comment_url:
