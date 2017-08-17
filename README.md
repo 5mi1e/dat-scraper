@@ -1,4 +1,4 @@
-# **DAT comment scraper**
+# **DAT comment scraper** (outdated)
 
 [**D**]*elfi* [**A**]*pollo* [**T**]*vnet* **comment scraper** is [Scrapy](http://scrapy.org/) based set of spiders
 which collects comments from 3 major latvian news portals: [delfi.lv](http://www.delfi.lv/),
